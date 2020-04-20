@@ -134,8 +134,10 @@ namespace anci.VideoEncoder
 
         private string GetComboValue(Dictionary<string, string> videoFormats, string text, String prefix = "")
         {
-            videoFormats.TryGetValue(text, out string value);
-            return String.IsNullOrEmpty(value) ? prefix + text : value;
+            if (videoFormats.TryGetValue(text, out string value))
+                return value;
+            else
+                return prefix + text;
         }
 
         private void ProcessFile(ListViewItem itm, string cmdline)
