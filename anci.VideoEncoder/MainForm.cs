@@ -128,7 +128,31 @@ namespace anci.VideoEncoder
                                         .Replace("{BITRATEV}", bitratev)
                                         .Replace("{BITRATEA}", bitratea);
 
-                ProcessFile(itm, cmdline);
+                if (ProcessFile(itm, cmdline))
+                {
+                    if (checkMoveFiles.Checked)
+                        ArchiveFile(itm);
+                }
+            }
+        }
+
+        private void ArchiveFile(ListViewItem itm)
+        {
+            itm.SubItems[2].Text = $"Moving file...";
+            Application.DoEvents();
+            try
+            {
+                if (!Directory.Exists(textMoveFolder.Text))
+                    Directory.CreateDirectory(textMoveFolder.Text);
+
+                FileInfo info = new FileInfo(itm.SubItems[0].Text);
+                File.Move(itm.SubItems[0].Text, Path.Combine(textMoveFolder.Text, info.Name));
+
+                itm.SubItems[2].Text = $"Done...";
+            }
+            catch (Exception ex)
+            {
+                itm.SubItems[2].Text = $"Error moving file: {ex.Message}";
             }
         }
 
@@ -140,7 +164,7 @@ namespace anci.VideoEncoder
                 return prefix + text;
         }
 
-        private void ProcessFile(ListViewItem itm, string cmdline)
+        private bool ProcessFile(ListViewItem itm, string cmdline)
         {
             itm.SubItems[2].Text = "Starting...";
             Application.DoEvents();
@@ -163,13 +187,29 @@ namespace anci.VideoEncoder
 
                 temp.WaitForExit();
                 itm.SubItems[2].Text = "Done...";
+
+                return true;
             }
             catch (Exception ex)
             {
                 itm.SubItems[2].Text = $"Error: {ex.Message}";
+
+                return false;
             }
 
-            Application.DoEvents();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            listView1.Items.Clear();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            folderBrowserDialog1.SelectedPath = textMoveFolder.Text;
+
+            if(folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+                textMoveFolder.Text = folderBrowserDialog1.SelectedPath;
         }
     }
 }

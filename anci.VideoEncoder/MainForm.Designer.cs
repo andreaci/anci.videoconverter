@@ -54,6 +54,11 @@
             this.label13 = new System.Windows.Forms.Label();
             this.listboxBitrateA = new System.Windows.Forms.ComboBox();
             this.label14 = new System.Windows.Forms.Label();
+            this.button3 = new System.Windows.Forms.Button();
+            this.textMoveFolder = new System.Windows.Forms.TextBox();
+            this.checkMoveFiles = new System.Windows.Forms.CheckBox();
+            this.button4 = new System.Windows.Forms.Button();
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.SuspendLayout();
             // 
             // label1
@@ -82,13 +87,15 @@
             // 
             // listView1
             // 
+            this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3});
             this.listView1.FullRowSelect = true;
             this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(37, 327);
+            this.listView1.Location = new System.Drawing.Point(37, 363);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(1058, 214);
             this.listView1.TabIndex = 4;
@@ -204,7 +211,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(980, 260);
+            this.button1.Location = new System.Drawing.Point(980, 303);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(115, 42);
             this.button1.TabIndex = 17;
@@ -216,7 +223,7 @@
             // 
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.Location = new System.Drawing.Point(923, 213);
+            this.label11.Location = new System.Drawing.Point(923, 256);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(172, 32);
             this.label11.TabIndex = 18;
@@ -224,7 +231,8 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(892, 547);
+            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button2.Location = new System.Drawing.Point(892, 583);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(203, 42);
             this.button2.TabIndex = 19;
@@ -283,13 +291,55 @@
             this.label14.TabIndex = 24;
             this.label14.Text = "Audio bitrate limit";
             // 
+            // button3
+            // 
+            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button3.Location = new System.Drawing.Point(37, 582);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(75, 29);
+            this.button3.TabIndex = 26;
+            this.button3.Text = "Clear";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // textMoveFolder
+            // 
+            this.textMoveFolder.Location = new System.Drawing.Point(268, 312);
+            this.textMoveFolder.Name = "textMoveFolder";
+            this.textMoveFolder.Size = new System.Drawing.Size(336, 25);
+            this.textMoveFolder.TabIndex = 27;
+            // 
+            // checkMoveFiles
+            // 
+            this.checkMoveFiles.AutoSize = true;
+            this.checkMoveFiles.Location = new System.Drawing.Point(34, 314);
+            this.checkMoveFiles.Name = "checkMoveFiles";
+            this.checkMoveFiles.Size = new System.Drawing.Size(228, 21);
+            this.checkMoveFiles.TabIndex = 28;
+            this.checkMoveFiles.Text = "Move converted files to this folder";
+            this.checkMoveFiles.UseVisualStyleBackColor = true;
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(610, 312);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(35, 25);
+            this.button4.TabIndex = 29;
+            this.button4.Text = "...";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(1125, 601);
+            this.ClientSize = new System.Drawing.Size(1125, 636);
+            this.Controls.Add(this.button4);
+            this.Controls.Add(this.checkMoveFiles);
+            this.Controls.Add(this.textMoveFolder);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.listboxBitrateA);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.listboxBitrateV);
@@ -353,6 +403,11 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.ComboBox listboxBitrateA;
         private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.TextBox textMoveFolder;
+        private System.Windows.Forms.CheckBox checkMoveFiles;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
     }
 }
 
