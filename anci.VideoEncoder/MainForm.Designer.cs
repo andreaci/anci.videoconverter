@@ -65,6 +65,7 @@
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.radioButton3 = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.checkRemoveSubs = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -219,7 +220,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(854, 71);
+            this.button1.Location = new System.Drawing.Point(991, 110);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(115, 42);
             this.button1.TabIndex = 17;
@@ -231,7 +232,7 @@
             // 
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.Location = new System.Drawing.Point(735, 24);
+            this.label11.Location = new System.Drawing.Point(934, 63);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(211, 32);
             this.label11.TabIndex = 18;
@@ -240,7 +241,7 @@
             // button2
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(986, 71);
+            this.button2.Location = new System.Drawing.Point(991, 158);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(145, 42);
             this.button2.TabIndex = 19;
@@ -331,7 +332,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(735, 159);
+            this.label7.Location = new System.Drawing.Point(934, 235);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(224, 32);
             this.label7.TabIndex = 31;
@@ -339,7 +340,7 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(792, 206);
+            this.button5.Location = new System.Drawing.Point(991, 282);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(115, 42);
             this.button5.TabIndex = 30;
@@ -393,6 +394,16 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Source files";
             // 
+            // checkRemoveSubs
+            // 
+            this.checkRemoveSubs.AutoSize = true;
+            this.checkRemoveSubs.Location = new System.Drawing.Point(684, 213);
+            this.checkRemoveSubs.Name = "checkRemoveSubs";
+            this.checkRemoveSubs.Size = new System.Drawing.Size(126, 21);
+            this.checkRemoveSubs.TabIndex = 36;
+            this.checkRemoveSubs.Text = "Remove subtitles";
+            this.checkRemoveSubs.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -400,6 +411,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1188, 704);
+            this.Controls.Add(this.checkRemoveSubs);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.button5);
@@ -480,6 +492,7 @@
         private System.Windows.Forms.RadioButton radioButton2;
         private System.Windows.Forms.RadioButton radioButton3;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.CheckBox checkRemoveSubs;
     }
 }
 

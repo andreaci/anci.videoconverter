@@ -117,6 +117,7 @@ namespace anci.VideoEncoder
                 String source = itm.SubItems[0].Text;
                 String dest = itm.SubItems[1].Text == "" ? PrepareSingleFileName(itm) : itm.SubItems[1].Text;
 
+                String subremove = checkRemoveSubs.Checked ? " -sn " : "";
                 String video = GetComboValue(constants.VideoFormats, listboxVideo.Text, "-c:v ");
                 String audio = GetComboValue(constants.AudioFormats, listboxAudio.Text, "-c:a ");
                 String resolution = GetComboValue(constants.Resolutions, listResolution.Text, "-s ");
@@ -128,6 +129,7 @@ namespace anci.VideoEncoder
                                         .Replace("{VIDEO}", video)
                                         .Replace("{AUDIO}", audio)
                                         .Replace("{RESOLUTION}", resolution)
+                                        .Replace("{SUBREMOVE}", subremove)
                                         .Replace("{BITRATEV}", bitratev)
                                         .Replace("{BITRATEA}", bitratea);
 
