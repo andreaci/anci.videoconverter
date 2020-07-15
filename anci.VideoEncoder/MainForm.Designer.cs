@@ -56,9 +56,16 @@
             this.label14 = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
             this.textMoveFolder = new System.Windows.Forms.TextBox();
-            this.checkMoveFiles = new System.Windows.Forms.CheckBox();
             this.button4 = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.label7 = new System.Windows.Forms.Label();
+            this.button5 = new System.Windows.Forms.Button();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.radioButton3 = new System.Windows.Forms.RadioButton();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -84,6 +91,7 @@
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.Multiselect = true;
             // 
             // listView1
             // 
@@ -95,9 +103,9 @@
             this.columnHeader3});
             this.listView1.FullRowSelect = true;
             this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(37, 363);
+            this.listView1.Location = new System.Drawing.Point(37, 431);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(1058, 214);
+            this.listView1.Size = new System.Drawing.Size(1121, 214);
             this.listView1.TabIndex = 4;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -191,7 +199,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(966, 9);
+            this.label10.Location = new System.Drawing.Point(1047, 10);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(129, 17);
             this.label10.TabIndex = 16;
@@ -203,15 +211,15 @@
             this.listboxDestination.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.listboxDestination.Enabled = false;
             this.listboxDestination.FormattingEnabled = true;
-            this.listboxDestination.Location = new System.Drawing.Point(1101, 6);
+            this.listboxDestination.Location = new System.Drawing.Point(1162, 2);
             this.listboxDestination.Name = "listboxDestination";
-            this.listboxDestination.Size = new System.Drawing.Size(20, 25);
+            this.listboxDestination.Size = new System.Drawing.Size(24, 25);
             this.listboxDestination.TabIndex = 15;
             this.listboxDestination.Visible = false;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(980, 303);
+            this.button1.Location = new System.Drawing.Point(854, 71);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(115, 42);
             this.button1.TabIndex = 17;
@@ -223,18 +231,18 @@
             // 
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.Location = new System.Drawing.Point(923, 256);
+            this.label11.Location = new System.Drawing.Point(735, 24);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(172, 32);
+            this.label11.Size = new System.Drawing.Size(211, 32);
             this.label11.TabIndex = 18;
-            this.label11.Text = "3. Prepare jobs";
+            this.label11.Text = "3. Conversion jobs";
             // 
             // button2
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(892, 583);
+            this.button2.Location = new System.Drawing.Point(986, 71);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(203, 42);
+            this.button2.Size = new System.Drawing.Size(145, 42);
             this.button2.TabIndex = 19;
             this.button2.Text = "Start conversion!";
             this.button2.UseVisualStyleBackColor = true;
@@ -294,7 +302,7 @@
             // button3
             // 
             this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button3.Location = new System.Drawing.Point(37, 582);
+            this.button3.Location = new System.Drawing.Point(37, 650);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 29);
             this.button3.TabIndex = 26;
@@ -304,24 +312,14 @@
             // 
             // textMoveFolder
             // 
-            this.textMoveFolder.Location = new System.Drawing.Point(268, 312);
+            this.textMoveFolder.Location = new System.Drawing.Point(158, 48);
             this.textMoveFolder.Name = "textMoveFolder";
             this.textMoveFolder.Size = new System.Drawing.Size(336, 25);
             this.textMoveFolder.TabIndex = 27;
             // 
-            // checkMoveFiles
-            // 
-            this.checkMoveFiles.AutoSize = true;
-            this.checkMoveFiles.Location = new System.Drawing.Point(34, 314);
-            this.checkMoveFiles.Name = "checkMoveFiles";
-            this.checkMoveFiles.Size = new System.Drawing.Size(228, 21);
-            this.checkMoveFiles.TabIndex = 28;
-            this.checkMoveFiles.Text = "Move converted files to this folder";
-            this.checkMoveFiles.UseVisualStyleBackColor = true;
-            // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(610, 312);
+            this.button4.Location = new System.Drawing.Point(500, 48);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(35, 25);
             this.button4.TabIndex = 29;
@@ -329,16 +327,82 @@
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(735, 159);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(224, 32);
+            this.label7.TabIndex = 31;
+            this.label7.Text = "3. Concatenate files";
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(792, 206);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(115, 42);
+            this.button5.TabIndex = 30;
+            this.button5.Text = "Concatenate files";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.Location = new System.Drawing.Point(17, 50);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(138, 21);
+            this.radioButton1.TabIndex = 32;
+            this.radioButton1.Text = "Move to this folder";
+            this.radioButton1.UseVisualStyleBackColor = true;
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Checked = true;
+            this.radioButton2.Location = new System.Drawing.Point(17, 24);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(135, 21);
+            this.radioButton2.TabIndex = 33;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "Do not touch them";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            // 
+            // radioButton3
+            // 
+            this.radioButton3.AutoSize = true;
+            this.radioButton3.Location = new System.Drawing.Point(17, 77);
+            this.radioButton3.Name = "radioButton3";
+            this.radioButton3.Size = new System.Drawing.Size(96, 21);
+            this.radioButton3.TabIndex = 34;
+            this.radioButton3.Text = "Delete them";
+            this.radioButton3.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.radioButton2);
+            this.groupBox1.Controls.Add(this.radioButton3);
+            this.groupBox1.Controls.Add(this.textMoveFolder);
+            this.groupBox1.Controls.Add(this.button4);
+            this.groupBox1.Controls.Add(this.radioButton1);
+            this.groupBox1.Location = new System.Drawing.Point(37, 316);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(608, 100);
+            this.groupBox1.TabIndex = 35;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Source files";
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(1125, 636);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.checkMoveFiles);
-            this.Controls.Add(this.textMoveFolder);
+            this.ClientSize = new System.Drawing.Size(1188, 704);
+            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.button5);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.listboxBitrateA);
             this.Controls.Add(this.label14);
@@ -371,6 +435,8 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -405,9 +471,15 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.TextBox textMoveFolder;
-        private System.Windows.Forms.CheckBox checkMoveFiles;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.RadioButton radioButton3;
+        private System.Windows.Forms.GroupBox groupBox1;
     }
 }
 

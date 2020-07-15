@@ -43,13 +43,14 @@ namespace anci.VideoEncoder
 
         private void OpenFileSelection()
         {
-            if (openFileDialog1.ShowDialog() == DialogResult.OK) 
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
                 AddFileSelection(openFileDialog1.FileNames);
         }
 
         private void AddFileSelection(string[] fileNames)
         {
-            foreach (String file in fileNames) {
+            foreach (String file in fileNames)
+            {
                 AddFileSelection(file);
             }
         }
@@ -86,17 +87,19 @@ namespace anci.VideoEncoder
         private string PrepareSingleFileName(ListViewItem itm)
         {
             bool same_path = constants.Destinations[listboxDestination.Text] == "SAME";
-            String newFolderName = "TODO";
             String filename = itm.SubItems[0].Text;
 
             FileInfo info = new FileInfo(filename);
-            filename = filename.Substring(0, filename.Length - info.Extension.Length) + GetComboValue(constants.Extensions, listboxExtension.Text);
+            String newFolderName = same_path ? info.DirectoryName : "TODO_TEXT_BOX_FOLDERNAME";
+            filename = Path.Combine(info.DirectoryName, info.Name.Substring(0, info.Name.Length - info.Extension.Length) + GetComboValue(constants.Extensions, listboxExtension.Text));
+            
+            if (filename == itm.SubItems[0].Text || File.Exists(filename))
+            {
+                info = new FileInfo(filename);
+                filename = Path.Combine(newFolderName, info.Name.Replace(info.Extension, "") + " " + DateTime.Now.ToString("yyyyMMddHHmmss") + info.Extension);
 
-            if (!same_path)
-                filename = filename.Replace(info.DirectoryName, newFolderName);
-
-            if (filename == itm.SubItems[0].Text)
                 itm.SubItems[2].Text = "WARNING! SAME FILE NAME!";
+            }
 
             itm.SubItems[1].Text = filename;
 
@@ -111,8 +114,8 @@ namespace anci.VideoEncoder
 
             foreach (ListViewItem itm in listView1.Items)
             {
-                String source = "\"" + itm.SubItems[0].Text + "\"";
-                String dest = "\"" + (itm.SubItems[1].Text == "" ? PrepareSingleFileName(itm) : itm.SubItems[1].Text) + "\"";
+                String source = itm.SubItems[0].Text;
+                String dest = itm.SubItems[1].Text == "" ? PrepareSingleFileName(itm) : itm.SubItems[1].Text;
 
                 String video = GetComboValue(constants.VideoFormats, listboxVideo.Text, "-c:v ");
                 String audio = GetComboValue(constants.AudioFormats, listboxAudio.Text, "-c:a ");
@@ -120,8 +123,8 @@ namespace anci.VideoEncoder
                 String bitratev = Constants.BitRateVString(GetComboValue(constants.BitRatesVideo, listboxBitrateV.Text));
                 String bitratea = Constants.BitRateAString(GetComboValue(constants.BitRatesAudio, listboxBitrateA.Text));
 
-                String cmdline = pattern.Replace("{SOURCE}", source)
-                                        .Replace("{DEST}", dest)
+                String cmdline = pattern.Replace("{SOURCE}", "\"" + source + "\"")
+                                        .Replace("{DEST}", "\"" + dest + "\"")
                                         .Replace("{VIDEO}", video)
                                         .Replace("{AUDIO}", audio)
                                         .Replace("{RESOLUTION}", resolution)
@@ -130,8 +133,18 @@ namespace anci.VideoEncoder
 
                 if (ProcessFile(itm, cmdline))
                 {
-                    if (checkMoveFiles.Checked)
+                    if (radioButton1.Checked)
                         ArchiveFile(itm);
+
+                    try
+                    {
+                        if (radioButton3.Checked)
+                            File.Delete(itm.SubItems[0].Text);
+                    }
+                    catch (Exception ex)
+                    {
+                        itm.SubItems[2].Text = $"Error deleting file: {ex.Message}";
+                    }
                 }
             }
         }
@@ -208,8 +221,48 @@ namespace anci.VideoEncoder
         {
             folderBrowserDialog1.SelectedPath = textMoveFolder.Text;
 
-            if(folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
                 textMoveFolder.Text = folderBrowserDialog1.SelectedPath;
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (listView1.Items.Count == 0)
+                return;
+
+            String BetterExtension = GetComboValue(constants.Extensions, listboxExtension.Text);
+            String temp = Path.GetTempFileName();
+            using (StreamWriter tempFile = new StreamWriter(temp, false))
+            {
+                foreach (ListViewItem itm in listView1.Items)
+                {
+                    String source = "file '" + itm.SubItems[0].Text + "'";
+                    tempFile.WriteLine(source);
+
+                    FileInfo info = new FileInfo(itm.SubItems[0].Text);
+                    BetterExtension = GetBetterExtension(BetterExtension, info.Extension);
+                }
+            }
+
+            saveFileDialog1.AddExtension = true;
+            saveFileDialog1.Filter = BetterExtension + "|*" + BetterExtension;
+
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                String destFile = saveFileDialog1.FileName;
+                
+                ProcessFile(listView1.Items[0], constants.ConcatPattern.Replace("{TEMPFILE}", temp).Replace("{DEST}", destFile));
+            }
+        }
+
+        private string GetBetterExtension(string betterExtension, string extension)
+        {
+            // TODO do something better here
+
+            if (extension == ".mkv") 
+                return extension;
+
+            return betterExtension;
         }
     }
 }
