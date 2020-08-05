@@ -14,6 +14,9 @@ namespace anci.VideoEncoder
 {
     public partial class MainForm : Form
     {
+        private readonly LogFile logFile = new LogFile();
+        private readonly ConversionList conversionList = new ConversionList();
+
         private readonly ConsoleForm process_console = new ConsoleForm();
         private readonly Constants constants = null;
         public MainForm()
@@ -37,6 +40,34 @@ namespace anci.VideoEncoder
             listboxDestination.SelectedIndex = 0;
             listboxBitrateV.SelectedIndex = 0;
             listboxBitrateA.SelectedIndex = 0;
+
+            ConversionItem.LoggedStep += ConversionItem_LoggedStep;
+            conversionList.ListChanged += ConversionList_listChanged;
+            conversionList.Clear();
+        }
+
+        private void ConversionList_listChanged(object sender)
+        {
+            ConversionList list = (ConversionList)sender;
+            labelTotalJobs.Text = 
+                $"Total Jobs: {list.Items.Count}\n" +
+                $"Remaining jobs: {list.Items.Count(x => x.Success == null)}\n" +
+                $"Success jobs: {list.Items.Count(x => x.Success == true)}\n" +
+                $"Failed jobs: {list.Items.Count(x => x.Success == false)}";
+
+            button2.Enabled = list.PendingOrFailed.Any();
+
+            Application.DoEvents();
+        }
+
+        private void ConversionItem_LoggedStep(object sender, string eventString)
+        {
+            String sourceFile = sender != null ? ((ConversionItem)sender).SourceFile : "";
+
+            labelCurrentStep.Text = sourceFile + "\n" + eventString;
+            logFile.Log(labelCurrentStep.Text);
+
+            Application.DoEvents();
         }
 
         private void FileSelection_Click(object sender, EventArgs e) => OpenFileSelection();
@@ -57,7 +88,20 @@ namespace anci.VideoEncoder
 
         private void AddFileSelection(string source)
         {
-            listView1.Items.Add(new ListViewItem(new String[] { source, "", "" }));
+            if (File.Exists(source))
+            {
+                listTemporary.Items.Add(new ListViewItem(source));
+            }
+            else if (Directory.Exists(source))
+            {
+                // path is a directory.
+                Array.ForEach(Directory.GetDirectories(source), x => AddFileSelection(x));
+                Array.ForEach(Directory.GetFiles(source), x => AddFileSelection(x));
+            }
+            else
+            {
+                // path doesn't exist.
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -78,96 +122,56 @@ namespace anci.VideoEncoder
 
         private void button1_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem itm in listView1.Items)
-            {
-                PrepareSingleFileName(itm);
-            }
-        }
-
-        private string PrepareSingleFileName(ListViewItem itm)
-        {
             bool same_path = constants.Destinations[listboxDestination.Text] == "SAME";
-            String filename = itm.SubItems[0].Text;
+            string DestFolder = same_path ? "" : textDestinationDir.Text;
 
-            FileInfo info = new FileInfo(filename);
-            String newFolderName = same_path ? info.DirectoryName : "TODO_TEXT_BOX_FOLDERNAME";
-            filename = Path.Combine(info.DirectoryName, info.Name.Substring(0, info.Name.Length - info.Extension.Length) + GetComboValue(constants.Extensions, listboxExtension.Text));
-            
-            if (filename == itm.SubItems[0].Text || File.Exists(filename))
+            if (String.IsNullOrEmpty(DestFolder))
             {
-                info = new FileInfo(filename);
-                filename = Path.Combine(newFolderName, info.Name.Replace(info.Extension, "") + " " + DateTime.Now.ToString("yyyyMMddHHmmss") + info.Extension);
-
-                itm.SubItems[2].Text = "WARNING! SAME FILE NAME!";
+                MessageBox.Show("Invalid destination folder");
+                return;
             }
 
-            itm.SubItems[1].Text = filename;
+            dynamic options = new
+            {
+                subremove = checkRemoveSubs.Checked ? " -sn " : "",
+                video = GetComboValue(constants.VideoFormats, listboxVideo.Text, "-c:v "),
+                audio = GetComboValue(constants.AudioFormats, listboxAudio.Text, "-c:a "),
+                resolution = GetComboValue(constants.Resolutions, listResolution.Text, "-s "),
+                bitratev = Constants.BitRateVString(GetComboValue(constants.BitRatesVideo, listboxBitrateV.Text)),
+                bitratea = Constants.BitRateAString(GetComboValue(constants.BitRatesAudio, listboxBitrateA.Text)),
+                extension = GetComboValue(constants.Extensions, listboxExtension.Text),
+                destinationFolder = DestFolder,
 
-            return filename;
+                originalMove = radioButton1.Checked,
+                originalDelete = radioButton3.Checked,
+                originalMoveFolder = textMoveFolder.Text
+            };
+
+            foreach (ListViewItem itm in listTemporary.Items)
+            {
+                conversionList.Add(new ConversionItem(itm.SubItems[0].Text, constants, options));
+            }
+
+            listTemporary.Items.Clear();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            //process_console.Show();
+            logFile.Start();
 
-            String pattern = constants.BasePattern;
-
-            foreach (ListViewItem itm in listView1.Items)
+            foreach (ConversionItem conversionItem in conversionList.PendingOrFailed)
             {
-                String source = itm.SubItems[0].Text;
-                String dest = itm.SubItems[1].Text == "" ? PrepareSingleFileName(itm) : itm.SubItems[1].Text;
+                if (conversionItem.Process(constants.ffmpeg_exe))
+                    conversionItem.ArchiveFile();
 
-                String subremove = checkRemoveSubs.Checked ? " -sn " : "";
-                String video = GetComboValue(constants.VideoFormats, listboxVideo.Text, "-c:v ");
-                String audio = GetComboValue(constants.AudioFormats, listboxAudio.Text, "-c:a ");
-                String resolution = GetComboValue(constants.Resolutions, listResolution.Text, "-s ");
-                String bitratev = Constants.BitRateVString(GetComboValue(constants.BitRatesVideo, listboxBitrateV.Text));
-                String bitratea = Constants.BitRateAString(GetComboValue(constants.BitRatesAudio, listboxBitrateA.Text));
-
-                String cmdline = pattern.Replace("{SOURCE}", "\"" + source + "\"")
-                                        .Replace("{DEST}", "\"" + dest + "\"")
-                                        .Replace("{VIDEO}", video)
-                                        .Replace("{AUDIO}", audio)
-                                        .Replace("{RESOLUTION}", resolution)
-                                        .Replace("{SUBREMOVE}", subremove)
-                                        .Replace("{BITRATEV}", bitratev)
-                                        .Replace("{BITRATEA}", bitratea);
-
-                if (ProcessFile(itm, cmdline))
-                {
-                    if (radioButton1.Checked)
-                        ArchiveFile(itm);
-
-                    try
-                    {
-                        if (radioButton3.Checked)
-                            File.Delete(itm.SubItems[0].Text);
-                    }
-                    catch (Exception ex)
-                    {
-                        itm.SubItems[2].Text = $"Error deleting file: {ex.Message}";
-                    }
-                }
+                conversionList.Updated();
             }
-        }
 
-        private void ArchiveFile(ListViewItem itm)
-        {
-            itm.SubItems[2].Text = $"Moving file...";
-            Application.DoEvents();
-            try
-            {
-                if (!Directory.Exists(textMoveFolder.Text))
-                    Directory.CreateDirectory(textMoveFolder.Text);
+            logFile.Stop(checkOpenLog.Checked);
 
-                FileInfo info = new FileInfo(itm.SubItems[0].Text);
-                File.Move(itm.SubItems[0].Text, Path.Combine(textMoveFolder.Text, info.Name));
-
-                itm.SubItems[2].Text = $"Done...";
-            }
-            catch (Exception ex)
-            {
-                itm.SubItems[2].Text = $"Error moving file: {ex.Message}";
+            if (checkShutdown.Checked) {
+                Process.Start("shutdown", "/s /t 0");
+                Application.Exit();
             }
         }
 
@@ -178,45 +182,9 @@ namespace anci.VideoEncoder
             else
                 return prefix + text;
         }
-
-        private bool ProcessFile(ListViewItem itm, string cmdline)
-        {
-            itm.SubItems[2].Text = "Starting...";
-            Application.DoEvents();
-
-            try
-            {
-                ProcessStartInfo info = new ProcessStartInfo
-                {
-                    FileName = constants.ffmpeg_exe,
-                    Arguments = cmdline,
-                    //UseShellExecute = false,
-                    //RedirectStandardOutput = true,
-                    //RedirectStandardError = true,
-                    CreateNoWindow = true
-                };
-
-                Process temp = Process.Start(info);
-
-                process_console.SetProcess(temp);
-
-                temp.WaitForExit();
-                itm.SubItems[2].Text = "Done...";
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                itm.SubItems[2].Text = $"Error: {ex.Message}";
-
-                return false;
-            }
-
-        }
-
         private void button3_Click(object sender, EventArgs e)
         {
-            listView1.Items.Clear();
+            listTemporary.Items.Clear();
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -227,16 +195,16 @@ namespace anci.VideoEncoder
                 textMoveFolder.Text = folderBrowserDialog1.SelectedPath;
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void concatenateButton_click(object sender, EventArgs e)
         {
-            if (listView1.Items.Count == 0)
+            if (listTemporary.Items.Count == 0)
                 return;
 
             String BetterExtension = GetComboValue(constants.Extensions, listboxExtension.Text);
             String temp = Path.GetTempFileName();
             using (StreamWriter tempFile = new StreamWriter(temp, false))
             {
-                foreach (ListViewItem itm in listView1.Items)
+                foreach (ListViewItem itm in listTemporary.Items)
                 {
                     String source = "file '" + itm.SubItems[0].Text + "'";
                     tempFile.WriteLine(source);
@@ -252,8 +220,9 @@ namespace anci.VideoEncoder
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 String destFile = saveFileDialog1.FileName;
-                
-                ProcessFile(listView1.Items[0], constants.ConcatPattern.Replace("{TEMPFILE}", temp).Replace("{DEST}", destFile));
+
+                ConversionItem itm = new ConversionItem() { DestinationFile = destFile, SourceFile = temp, CommandLine = constants.ConcatPattern };
+                itm.Process(constants.ffmpeg_exe);
             }
         }
 
@@ -265,6 +234,24 @@ namespace anci.VideoEncoder
                 return extension;
 
             return betterExtension;
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            folderBrowserDialog1.SelectedPath = textDestinationDir.Text;
+
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+                textDestinationDir.Text = folderBrowserDialog1.SelectedPath;
+        }
+
+        private void checkOpenLog_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            conversionList.Clear();
         }
     }
 }
