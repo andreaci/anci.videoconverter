@@ -125,7 +125,7 @@ namespace anci.VideoEncoder
             bool same_path = constants.Destinations[listboxDestination.Text] == "SAME";
             string DestFolder = same_path ? "" : textDestinationDir.Text;
 
-            if (String.IsNullOrEmpty(DestFolder))
+            if (!same_path && String.IsNullOrEmpty(DestFolder))
             {
                 MessageBox.Show("Invalid destination folder");
                 return;
