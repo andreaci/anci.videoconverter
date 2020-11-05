@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,69 +10,12 @@ using System.Threading.Tasks;
 namespace anci.VideoEncoder
 {
 
-    public class ConversionList : IEnumerable
+    public abstract class ConversionItem
     {
-        public delegate void dListChanged(object sender);
-        public event dListChanged ListChanged;
+        public ConversionItem() { }
 
-        public ObservableCollection<ConversionItem> Items = new ObservableCollection<ConversionItem>();
+        public ConversionItem(String sourceFile, Constants constants, GeneratedOptions generatedOptions ) {
 
-        public IEnumerable<ConversionItem> PendingOrFailed
-        {
-            get
-            {
-                return Items.Where(x => x.Success != true);
-            }
-        }
-
-        public ConversionList() {
-            Items.CollectionChanged += Items_CollectionChanged;
-        }
-
-        private void Items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            ListChanged?.Invoke(this);
-        }
-
-        public IEnumerator GetEnumerator()
-        {
-            return Items.GetEnumerator();
-        }
-
-        internal void Add(string source, string destination, string parameters)
-        {
-            Items.Add(new ConversionItem()
-            {
-                SourceFile = source,
-                DestinationFile = destination,
-                CommandLine = parameters
-            });
-        }
-
-        internal void Add(ConversionItem conversionItem)
-        {
-            Items.Add(conversionItem);
-        }
-
-        internal void Clear()
-        {
-            Items.Clear();
-        }
-
-        internal void Updated()
-        {
-            ListChanged?.Invoke(this);
-        }
-    }
-
-    public class ConversionItem
-    {
-        public ConversionItem()
-        {
-        }
-
-        public ConversionItem(string sourceFile, Constants constants, dynamic generatedOptions)
-        {
             String destfilename = sourceFile;
 
             FileInfo info = new FileInfo(destfilename);
@@ -90,19 +32,21 @@ namespace anci.VideoEncoder
             OriginalMove = generatedOptions.originalMove;
             OriginalMoveFolder = generatedOptions.originalMoveFolder;
 
-            String cmdline = constants.BasePattern.Replace("{SOURCE}", "\"" + sourceFile + "\"")
-                                                  .Replace("{DEST}", "\"" + destfilename + "\"")
-                                                  .Replace("{VIDEO}", generatedOptions.video)
-                                                  .Replace("{AUDIO}", generatedOptions.audio)
-                                                  .Replace("{RESOLUTION}", generatedOptions.resolution)
-                                                  .Replace("{SUBREMOVE}", generatedOptions.subremove)
-                                                  .Replace("{BITRATEV}", generatedOptions.bitratev)
-                                                  .Replace("{BITRATEA}", generatedOptions.bitratea);
-
             this.SourceFile = sourceFile;
             this.DestinationFile = destfilename;
-            this.CommandLine = cmdline;
+
+
+            this.CommandLine = constants.BasePattern.Replace("{SOURCE}", "\"" + SourceFile + "\"")
+                                        .Replace("{DEST}", "\"" + DestinationFile + "\"")
+                                        .Replace("{VIDEO}", generatedOptions.video)
+                                        .Replace("{AUDIO}", generatedOptions.audio)
+                                        .Replace("{RESOLUTION}", generatedOptions.resolution)
+                                        .Replace("{SUBREMOVE}", generatedOptions.subremove)
+                                        .Replace("{BITRATEV}", generatedOptions.bitratev)
+                                        .Replace("{BITRATEA}", generatedOptions.bitratea);
+
         }
+
 
         public String SourceFile { get; set; }
         public String DestinationFile { get; set; }
@@ -118,74 +62,14 @@ namespace anci.VideoEncoder
         public bool? Success { get; set; } = null;
 
 
-        public bool Process(String ffmpeg_exe)
-        {
-            //String cmdLine = CommandLine.Replace("{SOURCE}", "\"" + SourceFile + "\"")
-            //                        .Replace("{DEST}", "\"" + DestinationFile + "\"");
+        public abstract bool Process();
 
-            return ProcessFile(ffmpeg_exe, CommandLine);
-        }
-
-        public bool ProcessFile(string ffmpeg_exe, string cmdline)
-        {
-            RaiseStep(this, cmdline);
-            RaiseStep(this, "Starting...");
-
-            try
-            {
-                ProcessStartInfo info = new ProcessStartInfo
-                {
-                    FileName = ffmpeg_exe,
-                    Arguments = cmdline,
-                    //UseShellExecute = false,
-                    //RedirectStandardOutput = true,
-                    //RedirectStandardError = true,
-                    CreateNoWindow = true
-                };
-
-                Stopwatch watch = new Stopwatch();
-                watch.Start();
-                Process temp = System.Diagnostics.Process.Start(info);
-
-                temp.WaitForExit();
-                watch.Stop();
-                RaiseStep(this, "Done...");
-
-                return (bool)(Success = IsCompletedSuccessfully(watch));
-            }
-            catch (Exception ex)
-            {
-                RaiseStep(this, $"Error: {ex.Message}");
-                Success = false;
-                return false;
-            }
-
-        }
-
-        private bool IsCompletedSuccessfully(Stopwatch watch)
-        {
-            //TODO analyze output
-
-            if (watch.ElapsedMilliseconds < 10 * 1000)
-                return false;
-
-            FileInfo info = new FileInfo(DestinationFile);
-
-            if (!info.Exists)
-                return false;
-
-            if (info.Length < 5 * 1024 * 1024)
-                return false;
-
-            return true;
-        }
-
-        public delegate void dLoggedStep(object sender, String eventString);
+        public delegate void dLoggedStep(object sender, String eventString, bool toFile);
         public static event dLoggedStep LoggedStep;
 
-        private static void RaiseStep(ConversionItem obj, string stringStep)
+        protected static void RaiseStep(ConversionItem obj, string stringStep, bool toFile = true)
         {
-            LoggedStep?.Invoke(obj, stringStep);
+            LoggedStep?.Invoke(obj, stringStep, toFile);
         }
 
         public void ArchiveFile()

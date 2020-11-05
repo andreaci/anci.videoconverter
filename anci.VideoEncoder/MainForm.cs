@@ -49,8 +49,8 @@ namespace anci.VideoEncoder
         private void ConversionList_listChanged(object sender)
         {
             ConversionList list = (ConversionList)sender;
-            labelTotalJobs.Text = 
-                $"Total Jobs: {list.Items.Count}\n" +
+            labelTotalJobs.Text =
+                $"Total Jobs: {list.Items.Count()}\n" +
                 $"Remaining jobs: {list.Items.Count(x => x.Success == null)}\n" +
                 $"Success jobs: {list.Items.Count(x => x.Success == true)}\n" +
                 $"Failed jobs: {list.Items.Count(x => x.Success == false)}";
@@ -60,14 +60,21 @@ namespace anci.VideoEncoder
             Application.DoEvents();
         }
 
-        private void ConversionItem_LoggedStep(object sender, string eventString)
+        private String log_string = "";
+        private void ConversionItem_LoggedStep(object sender, string eventString, bool toFile = true)
         {
             String sourceFile = sender != null ? ((ConversionItem)sender).SourceFile : "";
+            log_string = sourceFile + "\n" + eventString;
 
-            labelCurrentStep.Text = sourceFile + "\n" + eventString;
-            logFile.Log(labelCurrentStep.Text);
+            if(toFile)
+                logFile.Log(log_string);
 
-            Application.DoEvents();
+            labelCurrentStep.InvokeIfRequired((labelCurrentStep) =>
+            {
+                Console.WriteLine("update ui");
+                labelCurrentStep.Text = log_string;
+                //Application.DoEvents();
+            });
         }
 
         private void FileSelection_Click(object sender, EventArgs e) => OpenFileSelection();
@@ -131,7 +138,23 @@ namespace anci.VideoEncoder
                 return;
             }
 
-            dynamic options = new
+            foreach (ListViewItem itm in listTemporary.Items)
+            {
+#if EXE_CONVERSION
+                conversionList.Add(new ConversionItemExternal(itm.SubItems[0].Text, constants, GetConversionOptions(DestFolder), constants.ffmpeg_exe));            
+#else
+                conversionList.Add(new ConversionItemInternal(itm.SubItems[0].Text, constants, GetConversionOptions(DestFolder)));
+#endif
+            }
+
+
+            listTemporary.Items.Clear();
+
+        }
+
+        GeneratedOptions GetConversionOptions(string DestFolder)
+        {
+            return new GeneratedOptions
             {
                 subremove = checkRemoveSubs.Checked ? " -sn " : "",
                 video = GetComboValue(constants.VideoFormats, listboxVideo.Text, "-c:v "),
@@ -146,13 +169,6 @@ namespace anci.VideoEncoder
                 originalDelete = radioButton3.Checked,
                 originalMoveFolder = textMoveFolder.Text
             };
-
-            foreach (ListViewItem itm in listTemporary.Items)
-            {
-                conversionList.Add(new ConversionItem(itm.SubItems[0].Text, constants, options));
-            }
-
-            listTemporary.Items.Clear();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -161,7 +177,7 @@ namespace anci.VideoEncoder
 
             foreach (ConversionItem conversionItem in conversionList.PendingOrFailed)
             {
-                if (conversionItem.Process(constants.ffmpeg_exe))
+                if (conversionItem.Process())
                     conversionItem.ArchiveFile();
 
                 conversionList.Updated();
@@ -169,7 +185,8 @@ namespace anci.VideoEncoder
 
             logFile.Stop(checkOpenLog.Checked);
 
-            if (checkShutdown.Checked) {
+            if (checkShutdown.Checked)
+            {
                 Process.Start("shutdown", "/s /t 0");
                 Application.Exit();
             }
@@ -221,8 +238,8 @@ namespace anci.VideoEncoder
             {
                 String destFile = saveFileDialog1.FileName;
 
-                ConversionItem itm = new ConversionItem() { DestinationFile = destFile, SourceFile = temp, CommandLine = constants.ConcatPattern };
-                itm.Process(constants.ffmpeg_exe);
+                ConversionItem itm = new ConversionItemExternal(constants.ffmpeg_exe) { DestinationFile = destFile, SourceFile = temp, CommandLine = constants.ConcatPattern };
+                itm.Process();
             }
         }
 
@@ -230,7 +247,7 @@ namespace anci.VideoEncoder
         {
             // TODO do something better here
 
-            if (extension == ".mkv") 
+            if (extension == ".mkv")
                 return extension;
 
             return betterExtension;
