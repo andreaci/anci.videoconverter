@@ -15,7 +15,7 @@ namespace anci.VideoEncoder
         public Dictionary<String, String> VideoFormats { get; set; } = new Dictionary<string, string>(10);
         public Dictionary<String, String> BitRatesVideo { get; set; } = new Dictionary<string, string>(10);
         public Dictionary<String, String> BitRatesAudio { get; set; } = new Dictionary<string, string>(10);
-        public string BasePattern { get; set; } = " -y -i {SOURCE} {RESOLUTION} {VIDEO} {AUDIO} -strict -1 {BITRATEV} {BITRATEA} {SUBREMOVE} -map 0 {DEST}";
+        public string BasePattern { get; set; } = " -y -i {SOURCE} {RESOLUTION} {VIDEO} {AUDIO} -strict -1 {BITRATEV} {BITRATEA} {SUBREMOVE} -max_muxing_queue_size 9999 -map 0 {DEST}";
         public string ConcatPattern { get; set; } = "-f concat -safe 0 -i \"{SOURCE}\" -c copy {DEST}";
 
         public string ffmpeg_exe { get; set; } = Path.Combine(Application.StartupPath, "ffmpeg.exe");
