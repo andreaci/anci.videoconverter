@@ -156,7 +156,7 @@ namespace anci.VideoEncoder
         {
             return new GeneratedOptions
             {
-                subremove = checkRemoveSubs.Checked ? " -sn " : "",
+                subremove = checkRemoveSubs.Checked ? " -sn " : " -c:s copy ",
                 video = GetComboValue(constants.VideoFormats, listboxVideo.Text, "-c:v "),
                 audio = GetComboValue(constants.AudioFormats, listboxAudio.Text, "-c:a "),
                 resolution = GetComboValue(constants.Resolutions, listResolution.Text, "-s "),

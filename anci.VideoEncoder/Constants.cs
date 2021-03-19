@@ -46,8 +46,8 @@ namespace anci.VideoEncoder
         {
             VideoFormats.Add("<copy as is>", "-c:v copy");
             VideoFormats.Add("<from file extension>", "");
-            VideoFormats.Add("MP4 / h264", "-c:v h264");
-            VideoFormats.Add("h265 / hevc", "-c:v hevc");
+            VideoFormats.Add("MP4 / h264", "-c:v:0 h264");
+            VideoFormats.Add("h265 / hevc", "-c:v:0 hevc");
             VideoFormats.Add("vp9", "-c:v vp9");
             VideoFormats.Add("webm", "-c:v webm");
 
