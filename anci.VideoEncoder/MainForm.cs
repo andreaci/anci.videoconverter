@@ -33,13 +33,13 @@ namespace anci.VideoEncoder
             listboxBitrateV.Items.AddRange(constants.BitRatesVideo.Keys.ToArray());
             listboxBitrateA.Items.AddRange(constants.BitRatesAudio.Keys.ToArray());
 
-            listResolution.SelectedIndex = 0;
-            listboxAudio.SelectedIndex = 0;
-            listboxVideo.SelectedIndex = 0;
-            listboxExtension.SelectedIndex = 0;
+            listResolution.SelectedIndex = constants.ResolutionsDefault;
+            listboxAudio.SelectedIndex = constants.AudioFormatsDefault;
+            listboxVideo.SelectedIndex = constants.VideoFormatsDefault;
+            listboxExtension.SelectedIndex = constants.ExtensionsDefault;
             listboxDestination.SelectedIndex = 0;
-            listboxBitrateV.SelectedIndex = 0;
-            listboxBitrateA.SelectedIndex = 0;
+            listboxBitrateV.SelectedIndex = constants.BitRatesVideoDefault;
+            listboxBitrateA.SelectedIndex = constants.BitRatesAudioDefault;
 
             ConversionItem.LoggedStep += ConversionItem_LoggedStep;
             conversionList.ListChanged += ConversionList_listChanged;

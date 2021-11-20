@@ -82,7 +82,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MediaToolkit\MediaToolkit src\MediaToolkit\MediaToolkit.csproj">
+    <ProjectReference Include="..\..\MediaToolkit\MediaToolkit.csproj">
       <Project>{124ab335-eeac-416f-b06b-80ad3cf56e38}</Project>
       <Name>MediaToolkit</Name>
     </ProjectReference>

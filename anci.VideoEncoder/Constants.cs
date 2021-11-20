@@ -22,6 +22,12 @@ namespace anci.VideoEncoder
 
         public static String settings_file = Path.Combine(Application.StartupPath, "custom.json");
 
+        public Int32 VideoFormatsDefault { get; set; } = 0;
+        public Int32 AudioFormatsDefault { get; set; } = 0;
+        public Int32 ExtensionsDefault { get; set; } = 0;
+        public Int32 ResolutionsDefault { get; set; } = 0;
+        public Int32 BitRatesVideoDefault { get; set; } = 0;
+        public Int32 BitRatesAudioDefault { get; set; } = 0;
 
         public static Constants Init()
         {
@@ -44,6 +50,7 @@ namespace anci.VideoEncoder
 
         public Constants InitDefaults()
         {
+            VideoFormatsDefault = 3;
             VideoFormats.Add("<copy as is>", "-c:v copy");
             VideoFormats.Add("<from file extension>", "");
             VideoFormats.Add("MP4 / h264", "-c:v:0 h264");
@@ -56,6 +63,7 @@ namespace anci.VideoEncoder
             AudioFormats.Add("AAC", "-c:a aac");
             AudioFormats.Add("AC3", "-c:a ac3");
 
+            ExtensionsDefault = 2;
             Extensions.Add(".mp4", ".mp4");
             Extensions.Add(".avi", ".avi");
             Extensions.Add(".mkv", ".mkv");
